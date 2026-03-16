@@ -1126,7 +1126,10 @@
         var todayKm = hasTodayKmEntry ? todayKmRaw : 0;
         var monthlyGoalKm = round(dailyGoalKm * daysInGoalWindow, 1);
         var userWeightKg = Number(model.settings.userWeightKg || DEFAULT_USER_WEIGHT_KG);
-        var daysElapsedInGoalWindow = Math.max(todayDayInMonth - startDayInMonth + 1, 0);
+        var daysElapsedInGoalWindow = Math.max(
+          todayDayInMonth - startDayInMonth + (hasTodayKmEntry ? 1 : 0),
+          0
+        );
         var plannedToDateKm = dailyGoalKm * daysElapsedInGoalWindow;
         var deltaToDateKm = totalKm - plannedToDateKm;
         var paceKmPerDay = daysElapsedInGoalWindow > 0 ? totalKm / daysElapsedInGoalWindow : 0;

@@ -1,0 +1,1813 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet">
+  <title>GåGris</title>
+  <style>
+    :root {
+      --bg-1: #F2BBC9;
+      --bg-2: #8082A6;
+      --card: rgba(255, 255, 255, 0.95);
+      --text: #333;
+      --muted: #666;
+      --line: #ddd;
+      --accent: #AFA9D9;
+      --accent-2: #282E40;
+      --warn: #F29979;
+      --danger: #d32f2f;
+      --radius: 18px;
+      --title: "Lilita One", system-ui;
+      --body: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: var(--body);
+      color: var(--text);
+      background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      min-height: 100vh;
+      min-height: 100svh;
+      min-height: 100dvh;
+      padding: 20px;
+      -webkit-text-size-adjust: 100%;
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+      padding-top: max(32px, calc(env(safe-area-inset-top) + 12px));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    .app-header {
+      font-family: "Lilita One", system-ui;
+      font-weight: 400;
+      font-style: normal;
+      font-size: clamp(2rem, 6vw, 4rem);
+      color: white;
+      display: flex;
+      justify-content: center;
+      margin: 10px 10px 20px;
+      padding-top: calc(8px + env(safe-area-inset-top, 0px));
+    }
+
+    .app-header-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      width: clamp(44px, 8vw, 64px);
+      height: auto;
+      display: block;
+    }
+
+    .header-title {
+      font-family: "Lilita One", system-ui !important;
+      font-weight: 400;
+      font-style: normal;
+      font-size: clamp(2rem, 6vw, 4rem);
+      line-height: 1;
+      color: white;
+    }
+
+    .app {
+      max-width: 920px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      gap: 25px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      position: relative;
+      width: 100%;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      color: #333;
+    }
+
+    .forecast-card-heading {
+      margin: 0 0 8px;
+      padding-right: 42px;
+      display: grid;
+      gap: 4px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .forecast-card-title {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.1;
+      color: #333;
+    }
+
+    .big {
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 12px;
+      background: #f6f3ff;
+      border: 1px solid #e2ddf6;
+      color: #4a4a4a;
+      text-align: center;
+      display: grid;
+      gap: 4px;
+      justify-items: center;
+      font-variant-numeric: tabular-nums;
+      position: relative;
+    }
+
+    #forecastCard > .budget-edit-toggle {
+      position: absolute;
+      top: 12px;
+      right: 25px;
+      z-index: 2;
+      box-shadow: 0 3px 0 rgba(90, 79, 159, 0.28), 0 6px 12px rgba(90, 79, 159, 0.24);
+    }
+
+    .big-note {
+      font-size: 16px;
+      line-height: 1.2;
+      font-weight: 600;
+    }
+
+    .big-main {
+      font-size: 34px;
+      line-height: 1;
+      font-weight: 800;
+    }
+
+    .big-sub {
+      font-size: 13px;
+      line-height: 1.2;
+      font-weight: 600;
+      opacity: 0.95;
+    }
+
+    .forecast-metrics {
+      border: 1px solid #e3dff1;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .forecast-metrics p {
+      margin: 0;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .forecast-metrics span {
+      color: #5f6178;
+      font-size: 0.87rem;
+    }
+
+    .forecast-metrics strong {
+      color: #2f3150;
+      font-size: 0.98rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .forecast-metrics.days-metric p {
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .forecast-metrics.days-metric,
+    .forecast-metrics.month-metric {
+      width: min(420px, 100%);
+      margin-left: auto;
+      margin-right: auto;
+      justify-items: center;
+      text-align: center;
+    }
+
+    .forecast-metrics.days-metric span,
+    .forecast-metrics.days-metric strong,
+    .forecast-metrics.month-metric span,
+    .forecast-metrics.month-metric strong {
+      display: block;
+      text-align: center;
+      width: 100%;
+    }
+
+    .forecast-metrics.days-metric strong {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .forecast-metrics.month-metric p {
+      display: grid;
+      justify-items: center;
+      gap: 4px;
+      text-align: center;
+    }
+
+    .forecast-metrics.month-metric strong {
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .forecast {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #e7e7e7;
+      display: grid;
+      gap: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .forecast-summary-box {
+      background: #282E40;
+      border-radius: 10px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .forecast-intro {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+    }
+
+    .month-progress {
+      margin-top: 4px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .big .month-progress {
+      width: min(420px, 100%);
+    }
+
+    .month-progress-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      color: #4a4a4a;
+      font-size: 0.78rem;
+      font-weight: 600;
+      width: 100%;
+    }
+
+    .month-progress-label {
+      text-align: left;
+      flex: 1 1 auto;
+    }
+
+    .month-progress-value {
+      font-size: 0.85rem;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      flex: 0 0 auto;
+    }
+
+    .month-progress-track {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .month-progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: #AFA9D9;
+      transition: width 260ms ease;
+    }
+
+    #forecastCard.pace-behind .month-progress-fill,
+    #forecastCard.pace-impossible .month-progress-fill {
+      background: #F29979;
+    }
+
+    .forecast-trend-box {
+      background: #f6f3ff;
+      border: 1px solid #e2ddf6;
+      border-radius: 12px;
+      padding: 10px;
+      margin: 0 0 10px;
+    }
+
+    .forecast-trend-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .forecast-trend-toggle {
+      width: 28px;
+      min-width: 28px;
+      height: 28px;
+      margin: 0;
+      border: 1px solid #e3def4;
+      background: #ffffff;
+      color: #7b70b4;
+      border-radius: 8px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      line-height: 1;
+      box-shadow: 0 4px 0 rgba(90, 79, 159, 0.28), 0 8px 16px rgba(90, 79, 159, 0.24);
+      flex: 0 0 auto;
+    }
+
+    .forecast-trend-toggle:hover {
+      background: #f7f4ff;
+    }
+
+    .forecast-trend-toggle[aria-expanded="true"] {
+      background: #ede8ff;
+      border-color: #d6cef6;
+      color: #5a4f9f;
+    }
+
+    .forecast-trend-icon {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    .forecast-trend-text {
+      margin: 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #4a4a4a;
+      text-align: left;
+      flex: 1 1 auto;
+    }
+
+    .forecast-trend-details {
+      margin-top: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #4a4a4a;
+      text-align: left;
+      white-space: pre-line;
+    }
+
+    .budget-edit-toggle {
+      width: 28px;
+      min-width: 28px;
+      height: 28px;
+      margin: 0;
+      padding: 0;
+      border-radius: 8px;
+      border: 1px solid #e3def4;
+      background: #ffffff;
+      color: #7b70b4;
+      line-height: 1;
+      font-size: 17px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 0 rgba(90, 79, 159, 0.28), 0 8px 16px rgba(90, 79, 159, 0.24);
+      flex: 0 0 auto;
+      cursor: pointer;
+    }
+
+    .budget-edit-toggle:hover {
+      background: #f7f4ff;
+    }
+
+    .settings-edit-panel {
+      margin-top: 10px;
+      border: 1px solid #e3dff1;
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .settings-edit-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr;
+    }
+
+    .settings-edit-panel input {
+      padding: 10px;
+      border-radius: 10px;
+      border-width: 1px;
+      font-size: 15px;
+    }
+
+    .settings-edit-panel .health-btn {
+      margin: 0;
+    }
+
+    .mini {
+      margin-top: 8px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #282E40;
+      border: 0;
+      color: #fff;
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+
+    label {
+      font-size: 14px;
+      color: #666;
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input {
+      width: 100%;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 14px;
+      font: inherit;
+      color: var(--text);
+      background: #fff;
+      font-size: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+
+    .row > div {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .row > .row-distance-control {
+      flex: 1 1 0;
+    }
+
+    .row > .row-weight-control {
+      flex: 1 1 0;
+    }
+
+    .row > .row-date-control {
+      flex: 0 0 auto;
+      display: grid;
+      justify-items: center;
+      min-width: auto;
+    }
+
+    .row-date-control label {
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .post-date-wrap {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .post-date-trigger {
+      width: 28px;
+      min-width: 28px;
+      height: 28px;
+      margin: 0;
+      padding: 0;
+      border-radius: 8px;
+      border: 1px solid #e3def4;
+      background: #ffffff;
+      color: #7b70b4;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 0 rgba(90, 79, 159, 0.28), 0 8px 16px rgba(90, 79, 159, 0.24);
+      flex: 0 0 auto;
+    }
+
+    .post-date-trigger:hover {
+      background: #f7f4ff;
+    }
+
+    .post-date-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .post-date-input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 6px 0;
+      background: #AFA9D9;
+      color: #fff;
+      font-family: inherit;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .btn-primary {
+      background: #AFA9D9;
+      color: #fff;
+    }
+
+    .hint {
+      margin: 4px 0 0;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .status {
+      min-height: 1.2rem;
+      margin-top: 6px;
+      font-size: 14px;
+      color: #5a4f9f;
+      text-align: center;
+    }
+
+    .status.err {
+      color: var(--warn);
+    }
+
+    .health-row {
+      margin-top: 10px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .health-field {
+      text-align: left;
+    }
+
+    .health-field label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #666;
+    }
+
+    .health-actions {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr;
+    }
+
+    .health-btn {
+      background: #282E40;
+      max-width: none;
+    }
+
+    .side {
+      margin: 0;
+      display: grid;
+      gap: 4px;
+      color: #333;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .side-title {
+      margin: 0 0 8px;
+      font-weight: 600;
+      color: #666;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .history-list {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .history-empty {
+      margin: 0;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      column-gap: 8px;
+      font-size: 14px;
+      padding: 6px 4px;
+      border-bottom: 1px solid #e9e9e9;
+      background: transparent;
+    }
+
+    .history-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      justify-content: space-between;
+    }
+
+    .history-date {
+      margin: 0;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .history-main {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .history-delete {
+      background: none;
+      border: none;
+      color: #d32f2f;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1;
+      padding: 0;
+      margin-left: 5px;
+      justify-self: end;
+      cursor: pointer;
+    }
+
+    .history-delete:hover {
+      color: #9a0007;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(40, 46, 64, 0.45);
+      display: grid;
+      place-items: center;
+      z-index: 2147483647;
+      backdrop-filter: blur(6px);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .modal {
+      width: min(90vw, 360px);
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      padding: 20px 18px 16px;
+      text-align: center;
+      border: 1px solid #e7e7e7;
+    }
+
+    .modal-title {
+      font-family: "Lilita One", system-ui;
+      font-size: 1.4rem;
+      color: #282E40;
+      margin-bottom: 6px;
+    }
+
+    .modal-message {
+      color: #555;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .modal-actions.one-column {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+
+    .modal-actions.one-column .modal-confirm {
+      min-width: 140px;
+    }
+
+    .modal-btn {
+      margin: 0;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+    }
+
+    .modal-cancel {
+      background: #f1f1f1;
+      color: #333;
+    }
+
+    .modal-confirm {
+      background: #AFA9D9;
+      color: #fff;
+    }
+
+    .modal-confirm.modal-danger {
+      background: #F29979;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      #forecastCard > .budget-edit-toggle {
+        right: 18px;
+      }
+
+    }
+
+    @media (min-width: 640px) {
+      .health-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-edit-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header-inner">
+      <img class="header-logo" src="footprint.png" alt="" aria-hidden="true">
+      <span class="header-title">GåGris</span>
+    </div>
+  </header>
+
+  <main class="app">
+    <section id="forecastCard" class="card pace-normal">
+      <button id="settingsEditToggle" class="budget-edit-toggle" type="button" aria-label="Rediger startdato og km-mål pr. dag" aria-expanded="false">✎</button>
+      <div class="forecast-card-heading">
+        <h1 id="monthlyGoalHeadline" class="forecast-card-title">Mål: 0,0 km</h1>
+      </div>
+      <div id="settingsEditPanel" class="settings-edit-panel hidden">
+        <div class="settings-edit-grid">
+          <div class="health-field">
+            <label for="quickStartDateInput">Startdato</label>
+            <input id="quickStartDateInput" type="date">
+          </div>
+          <div class="health-field">
+            <label for="quickGoalInput">Km mål pr. dag</label>
+            <input id="quickGoalInput" type="number" min="0.1" max="100" step="0.1" placeholder="fx 7.4" inputmode="decimal">
+          </div>
+        </div>
+        <button id="saveQuickSettingsButton" class="health-btn" type="button">Gem startdato og km-mål</button>
+      </div>
+      <div class="forecast-trend-box">
+        <div class="forecast-trend-head">
+          <p id="paceTrendLine" class="forecast-trend-text">Du går mere end forventet.</p>
+          <button id="paceTrendToggle" class="forecast-trend-toggle" type="button" aria-expanded="false" aria-label="Vis udvidet prognose">
+            <svg class="forecast-trend-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 18h16M6 16l4-4 3 2 5-6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+        <div id="paceTrendDetails" class="forecast-trend-details hidden"></div>
+      </div>
+      <div id="todayProgress" class="big">
+        <div class="month-progress">
+          <div class="month-progress-head">
+            <span class="month-progress-label">Månedens kilo mål:</span>
+            <strong id="monthProgressText" class="month-progress-value">0,0 / 0,0 kg</strong>
+          </div>
+          <div id="monthProgressBar" class="month-progress-track" role="progressbar" aria-label="Fremdrift mod månedens km-mål" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="monthProgressFill" class="month-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      <div class="forecast" aria-live="polite">
+        <div class="forecast-summary-box">
+          <p id="dailyGoalLine" class="forecast-intro">Dagligt kilometermål: <strong>7,4 km</strong></p>
+          <p id="daysLeftLine" class="forecast-intro">Dage tilbage: <strong>0 dage</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <form id="entryForm">
+        <div class="row">
+          <div class="row-distance-control">
+            <label for="entryKm">Distance (km)</label>
+            <input id="entryKm" type="number" min="0" step="0.1" placeholder="fx 5.6">
+          </div>
+          <div class="row-weight-control">
+            <label for="weightInput">Kg</label>
+            <input id="weightInput" type="number" min="1" max="500" step="0.1" placeholder="fx 69.0" inputmode="decimal">
+          </div>
+          <div class="row-date-control">
+            <label for="entryDate">Dato</label>
+            <div class="post-date-wrap">
+              <button class="post-date-trigger" id="entryDateTrigger" type="button" aria-label="Vælg dato">
+                <svg class="post-date-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <input class="post-date-input" id="entryDate" type="date" required aria-label="Vælg dato">
+            </div>
+          </div>
+        </div>
+        <button class="btn-primary" type="submit">Tilføj</button>
+      </form>
+      <div class="health-row">
+        <div class="health-actions">
+          <button id="syncHealthButton" class="health-btn" type="button">Hent kg fra Sundhed</button>
+        </div>
+      </div>
+      <p id="status" class="status" aria-live="polite"></p>
+    </section>
+
+    <section class="card">
+      <p class="side-title">Gemte dage</p>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <section class="card">
+      <p class="side-title">Daglig gang bidrager også til:</p>
+      <p id="benefitLine" class="side">→ stærkere knogler</p>
+    </section>
+  </main>
+
+  <div class="modal-backdrop hidden" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-message" id="modalMessage"></div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-cancel" id="modalCancel" type="button">Fortryd</button>
+        <button class="modal-btn modal-confirm" id="modalConfirm" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var DEFAULT_DAILY_GOAL_KM = 7.4;
+      var DEFAULT_USER_WEIGHT_KG = 69;
+      var KCAL_PER_KG = 7700;
+      var STORAGE_KEY = "gaagris.v2";
+      var BENEFIT_ROTATION_KEY = "gaagris.benefit.rotation.v1";
+      var WALK_BENEFITS = [
+        "stærkere knogler",
+        "bedre blodsukkerkontrol",
+        "mere aktivitet med hund",
+        "mere samvær med din hest",
+        "lettere mobilitet"
+      ];
+
+      var entryForm = document.getElementById("entryForm");
+      var entryDate = document.getElementById("entryDate");
+      var entryDateTrigger = document.getElementById("entryDateTrigger");
+      var entryKm = document.getElementById("entryKm");
+      var statusEl = document.getElementById("status");
+
+      var settingsEditToggleEl = document.getElementById("settingsEditToggle");
+      var settingsEditPanelEl = document.getElementById("settingsEditPanel");
+      var quickStartDateInputEl = document.getElementById("quickStartDateInput");
+      var quickGoalInputEl = document.getElementById("quickGoalInput");
+      var saveQuickSettingsButtonEl = document.getElementById("saveQuickSettingsButton");
+      var monthlyGoalHeadlineEl = document.getElementById("monthlyGoalHeadline");
+      var dailyGoalLineEl = document.getElementById("dailyGoalLine");
+      var daysLeftLineEl = document.getElementById("daysLeftLine");
+      var monthProgressTextEl = document.getElementById("monthProgressText");
+      var monthProgressBarEl = document.getElementById("monthProgressBar");
+      var monthProgressFillEl = document.getElementById("monthProgressFill");
+      var paceTrendLineEl = document.getElementById("paceTrendLine");
+      var paceTrendToggleEl = document.getElementById("paceTrendToggle");
+      var paceTrendDetailsEl = document.getElementById("paceTrendDetails");
+      var forecastCardEl = document.getElementById("forecastCard");
+      var historyListEl = document.getElementById("historyList");
+      var modalBackdrop = document.getElementById("modalBackdrop");
+      var modalTitle = document.getElementById("modalTitle");
+      var modalMessage = document.getElementById("modalMessage");
+      var modalCancel = document.getElementById("modalCancel");
+      var modalConfirm = document.getElementById("modalConfirm");
+      var benefitLineEl = document.getElementById("benefitLine");
+      var weightInputEl = document.getElementById("weightInput");
+      var syncHealthButtonEl = document.getElementById("syncHealthButton");
+      var confirmOpen = false;
+      var paceTrendDetailsOpen = false;
+
+      var model = loadModel();
+      rotateBenefitOnOpen();
+      entryDate.value = dateToInputValue(new Date());
+      if (entryDate && entryDateTrigger) {
+        syncEntryDatePicker();
+        entryDate.addEventListener("pointerdown", syncEntryDatePicker);
+        entryDate.addEventListener("focus", syncEntryDatePicker);
+        entryDate.addEventListener("change", syncEntryDatePicker);
+        entryDateTrigger.addEventListener("click", function () {
+          syncEntryDatePicker();
+          if (typeof entryDate.showPicker === "function") {
+            entryDate.showPicker();
+            return;
+          }
+          entryDate.focus({ preventScroll: true });
+          entryDate.click();
+        });
+      }
+      settingsEditToggleEl.addEventListener("click", toggleSettingsEditPanel);
+      saveQuickSettingsButtonEl.addEventListener("click", saveQuickSettings);
+      if (paceTrendToggleEl) {
+        paceTrendToggleEl.addEventListener("click", togglePaceTrendDetails);
+      }
+      syncHealthButtonEl.addEventListener("click", function () {
+        syncWeightFromHealth(false);
+      });
+      render();
+      if (hasHealthBridge() && model.settings.weightSource !== "manual") {
+        syncWeightFromHealth(true);
+      }
+
+      entryForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        clearStatus();
+
+        var date = entryDate.value;
+        var kmRaw = String(entryKm.value || "").trim();
+        var weightRaw = String(weightInputEl.value || "").trim();
+        var hasKm = kmRaw !== "";
+        var hasWeight = weightRaw !== "";
+        var km = hasKm ? parseLocalizedDecimal(kmRaw) : NaN;
+        var nextWeightKg = hasWeight ? parseLocalizedDecimal(weightRaw) : NaN;
+
+        if (!date) {
+          setStatus("Vælg en dato.", true);
+          openAlert({
+            title: "Vælg dato",
+            message: "Vælg en dato før du gemmer."
+          });
+          return;
+        }
+
+        if (!hasKm && !hasWeight) {
+          setStatus("Indtast distance eller kg.", true);
+          openAlert({
+            title: "Ingen værdier",
+            message: "Indtast distance eller kg før du trykker Tilføj."
+          });
+          return;
+        }
+
+        if (hasKm && (!Number.isFinite(km) || km < 0)) {
+          setStatus("Distance skal være 0 eller højere.", true);
+          openAlert({
+            title: "Ugyldig distance",
+            message: "Distance skal være 0 eller højere."
+          });
+          return;
+        }
+
+        if (hasWeight && (!Number.isFinite(nextWeightKg) || nextWeightKg <= 0)) {
+          setStatus("Indtast gyldige kg over 0.", true);
+          openAlert({
+            title: "Ugyldige kg",
+            message: "Indtast gyldige kg over 0."
+          });
+          return;
+        }
+
+        var existingEntryRecord = normalizeEntryRecord(model.entries[date]);
+        var nextEntryRecord = {};
+        if (Object.prototype.hasOwnProperty.call(existingEntryRecord, "km")) {
+          nextEntryRecord.km = existingEntryRecord.km;
+        }
+        if (Object.prototype.hasOwnProperty.call(existingEntryRecord, "weightKg")) {
+          nextEntryRecord.weightKg = existingEntryRecord.weightKg;
+        }
+        if (hasKm) {
+          nextEntryRecord.km = round(km, 2);
+        }
+        if (hasWeight) {
+          nextEntryRecord.weightKg = round(nextWeightKg, 1);
+          model.settings.userWeightKg = round(nextWeightKg, 1);
+          model.settings.weightSource = "manual";
+        }
+        if (Object.keys(nextEntryRecord).length > 0) {
+          model.entries[date] = nextEntryRecord;
+        }
+
+        saveModel(model);
+        render();
+        if (hasKm) {
+          entryKm.value = "";
+        }
+        if (hasWeight) {
+          weightInputEl.value = "";
+        }
+
+        if (hasKm && hasWeight) {
+          setStatus("Gemte distance for " + formatDate(date) + ".");
+        } else if (hasKm) {
+          setStatus("Gemte distance for " + formatDate(date) + ".");
+        } else {
+          setStatus("Data gemt.");
+        }
+      });
+
+      function render() {
+        var now = new Date();
+        var year = now.getFullYear();
+        var monthIndex = now.getMonth();
+        var daysInMonth = getDaysInMonth(year, monthIndex);
+        var monthPrefix = year + "-" + pad(monthIndex + 1);
+        var currentMonthFirstISO = monthPrefix + "-01";
+        var todayKey = dateToInputValue(now);
+        var todayDayInMonth = now.getDate();
+        var startDateISO = normalizeStartDateISO(model.settings.startDateISO, now, currentMonthFirstISO);
+        var startDayInMonth = Number(startDateISO.slice(8, 10));
+        if (model.settings.startDateISO !== startDateISO) {
+          model.settings.startDateISO = startDateISO;
+          saveModel(model);
+        }
+
+        var monthValues = Object.keys(model.entries)
+          .filter(function (dateKey) {
+            return dateKey.slice(0, 7) === monthPrefix && dateKey >= startDateISO && dateKey <= todayKey;
+          })
+          .map(function (dateKey) {
+            return getEntryKm(model.entries[dateKey]);
+          })
+          .filter(function (value) {
+            return Number.isFinite(value) && value >= 0;
+          });
+
+        var totalKm = round(sum(monthValues), 2);
+        var daysInGoalWindow = Math.max(daysInMonth - startDayInMonth + 1, 0);
+
+        var dailyGoalKm = Number(model.settings.dailyGoalKm);
+        if (!Number.isFinite(dailyGoalKm) || dailyGoalKm <= 0) {
+          dailyGoalKm = DEFAULT_DAILY_GOAL_KM;
+        }
+
+        var todayKmRaw = getEntryKm(model.entries[todayKey]);
+        var hasTodayKmEntry = Number.isFinite(todayKmRaw) && todayKmRaw >= 0;
+        var todayKm = hasTodayKmEntry ? todayKmRaw : 0;
+        var monthlyGoalKm = round(dailyGoalKm * daysInGoalWindow, 1);
+        var userWeightKg = Number(model.settings.userWeightKg || DEFAULT_USER_WEIGHT_KG);
+        var daysElapsedInGoalWindow = Math.max(todayDayInMonth - startDayInMonth + 1, 0);
+        var plannedToDateKm = dailyGoalKm * daysElapsedInGoalWindow;
+        var deltaToDateKm = totalKm - plannedToDateKm;
+        var paceKmPerDay = daysElapsedInGoalWindow > 0 ? totalKm / daysElapsedInGoalWindow : 0;
+        var projectedMonthKm = paceKmPerDay * daysInGoalWindow;
+        var projectedDeltaKm = projectedMonthKm - monthlyGoalKm;
+        var projectedKgDelta = projectedDeltaKm * userWeightKg / KCAL_PER_KG;
+        var projectedDeficitKm = projectedDeltaKm < 0 ? Math.abs(projectedDeltaKm) : 0;
+        var extensionPaceKmPerDay = paceKmPerDay > 0 ? paceKmPerDay : dailyGoalKm;
+        var deadlineExtensionDays = projectedDeficitKm > 0
+          ? Math.ceil(projectedDeficitKm / Math.max(extensionPaceKmPerDay, 0.1))
+          : 0;
+        var remainingGoalKm = Math.max(monthlyGoalKm - totalKm, 0);
+        var remainingDays = Math.max(daysInMonth - todayDayInMonth + (hasTodayKmEntry ? 0 : 1), 0);
+        var requiredKmPerRemainingDay = remainingGoalKm > 0 && remainingDays > 0
+          ? remainingGoalKm / remainingDays
+          : 0;
+        var adjustedDailyGoalKm = Math.max(requiredKmPerRemainingDay, 0);
+        var isImpossible = remainingGoalKm > 0 && (remainingDays === 0 || requiredKmPerRemainingDay > 20);
+        var isBehind = !isImpossible && deltaToDateKm < 0;
+
+        var adjustedDailyGoalText = adjustedDailyGoalKm <= 0
+          ? "0"
+          : formatNumber(adjustedDailyGoalKm, 1);
+
+        dailyGoalLineEl.innerHTML =
+          "Dagligt kilometermål: <strong>" + adjustedDailyGoalText + " km</strong>";
+        if (monthlyGoalHeadlineEl) {
+          monthlyGoalHeadlineEl.textContent = "Mål: " + formatNumber(monthlyGoalKm, 1) + " km";
+        }
+        daysLeftLineEl.innerHTML =
+          "Dage tilbage: <strong>" + String(Math.max(remainingDays, 0)) + " dage</strong>";
+        var monthlyProgressPercent = monthlyGoalKm > 0
+          ? Math.max(0, Math.min((totalKm / monthlyGoalKm) * 100, 100))
+          : 0;
+        var burnedWeightKg = totalKm * userWeightKg / KCAL_PER_KG;
+        var monthlyGoalWeightKg = monthlyGoalKm * userWeightKg / KCAL_PER_KG;
+        if (monthProgressTextEl) {
+          monthProgressTextEl.textContent = formatNumber(burnedWeightKg, 1) + " / " + formatNumber(monthlyGoalWeightKg, 1) + " kg";
+        }
+        if (monthProgressFillEl) {
+          monthProgressFillEl.style.width = monthlyProgressPercent.toFixed(1) + "%";
+        }
+        if (monthProgressBarEl) {
+          monthProgressBarEl.setAttribute("aria-valuenow", String(Math.round(monthlyProgressPercent)));
+          monthProgressBarEl.setAttribute(
+            "aria-valuetext",
+            formatNumber(burnedWeightKg, 1) + " af " + formatNumber(monthlyGoalWeightKg, 1) + " kg kropsvægt"
+          );
+        }
+        var isAboveExpected = deltaToDateKm >= 0;
+        var deltaToDateText = formatNumber(Math.abs(deltaToDateKm), 1);
+        var projectedDeltaText = formatNumber(Math.abs(projectedDeltaKm), 1);
+        var projectedKgText = formatNumber(Math.abs(projectedKgDelta), 1);
+        paceTrendLineEl.textContent = isAboveExpected
+          ? "Du går mere end forventet."
+          : "Du går mindre end forventet.";
+        if (paceTrendDetailsEl) {
+          if (isAboveExpected) {
+            paceTrendDetailsEl.innerHTML =
+              "Med dit nuværende mønster har du gået <strong>" + deltaToDateText + " km</strong> mere end planlagt.<br>" +
+              "Hvis du fortsætter sådan, vil du have gået <strong>" + projectedDeltaText + " km</strong> mere om måneden.<br>" +
+              "Det svarer til ekstra <strong>" + projectedKgText + " kg</strong> kropsvægt.";
+          } else {
+            paceTrendDetailsEl.innerHTML =
+              "Med dit nuværende mønster har du gået <strong>" + deltaToDateText + " km</strong> mindre end planlagt.<br>" +
+              "Hvis det tempo fortsætter vil du ende med at gå <strong>" + projectedDeltaText + " km</strong> mindre.<br>" +
+              "Det svarer til <strong>" + projectedKgText + " kg</strong> mindre kropsvægt og skubber målet med <strong>" +
+              String(Math.max(deadlineExtensionDays, 0)) + " dage</strong>.";
+          }
+        }
+        syncPaceTrendDetailsView();
+        if (isImpossible) {
+          forecastCardEl.classList.remove("pace-normal", "pace-behind");
+          forecastCardEl.classList.add("pace-impossible");
+        } else if (isBehind) {
+          forecastCardEl.classList.remove("pace-normal", "pace-impossible");
+          forecastCardEl.classList.add("pace-behind");
+        } else {
+          forecastCardEl.classList.remove("pace-behind", "pace-impossible");
+          forecastCardEl.classList.add("pace-normal");
+        }
+
+        if (document.activeElement !== weightInputEl) {
+          weightInputEl.value = toWeightInputValue(userWeightKg);
+        }
+        if (document.activeElement !== quickGoalInputEl) {
+          quickGoalInputEl.value = toGoalInputValue(dailyGoalKm);
+        }
+        if (document.activeElement !== quickStartDateInputEl) {
+          quickStartDateInputEl.value = startDateISO;
+        }
+        quickStartDateInputEl.min = currentMonthFirstISO;
+        quickStartDateInputEl.max = todayKey;
+
+        renderHistory();
+      }
+
+      function syncEntryDatePicker() {
+        if (!entryDate || !entryDateTrigger) {
+          return;
+        }
+        var todayISO = dateToInputValue(new Date());
+        entryDate.max = todayISO;
+        if (!entryDate.value || entryDate.value > todayISO) {
+          entryDate.value = todayISO;
+        }
+
+        var displayDate = formatDate(entryDate.value);
+        entryDateTrigger.title = displayDate ? "Dato: " + displayDate : "Vælg dato";
+        entryDateTrigger.setAttribute(
+          "aria-label",
+          displayDate ? "Vælg dato. Valgt dato: " + displayDate : "Vælg dato"
+        );
+      }
+
+      function togglePaceTrendDetails() {
+        paceTrendDetailsOpen = !paceTrendDetailsOpen;
+        syncPaceTrendDetailsView();
+      }
+
+      function syncPaceTrendDetailsView() {
+        if (!paceTrendDetailsEl || !paceTrendToggleEl) {
+          return;
+        }
+        paceTrendDetailsEl.classList.toggle("hidden", !paceTrendDetailsOpen);
+        paceTrendToggleEl.setAttribute("aria-expanded", paceTrendDetailsOpen ? "true" : "false");
+        paceTrendToggleEl.setAttribute(
+          "aria-label",
+          paceTrendDetailsOpen ? "Skjul udvidet prognose" : "Vis udvidet prognose"
+        );
+      }
+
+      function renderHistory() {
+        historyListEl.innerHTML = "";
+
+        var records = Object.keys(model.entries)
+          .map(function (dateKey) {
+            return {
+              dateISO: dateKey,
+              km: getEntryKm(model.entries[dateKey]),
+              weightKg: getEntryWeight(model.entries[dateKey])
+            };
+          })
+          .filter(function (record) {
+            var hasKm = Number.isFinite(record.km) && record.km >= 0;
+            var hasWeight = Number.isFinite(record.weightKg) && record.weightKg > 0;
+            return hasKm || hasWeight;
+          })
+          .sort(function (a, b) {
+            if (a.dateISO < b.dateISO) return 1;
+            if (a.dateISO > b.dateISO) return -1;
+            return 0;
+          });
+
+        if (records.length === 0) {
+          var empty = document.createElement("p");
+          empty.className = "history-empty";
+          empty.textContent = "Ingen dage logget endnu.";
+          historyListEl.appendChild(empty);
+          return;
+        }
+
+        records.forEach(function (record) {
+          historyListEl.appendChild(buildHistoryItem(record.dateISO, record.km, record.weightKg));
+        });
+      }
+
+      function buildHistoryItem(dateISO, km, weightKg) {
+        var item = document.createElement("article");
+        item.className = "history-item";
+
+        var top = document.createElement("div");
+        top.className = "history-top";
+
+        var date = document.createElement("p");
+        date.className = "history-date";
+        date.textContent = formatDate(dateISO);
+
+        var main = document.createElement("p");
+        main.className = "history-main";
+        main.innerHTML = formatHistoryMain(km, weightKg);
+
+        top.appendChild(date);
+        top.appendChild(main);
+        item.appendChild(top);
+
+        var delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "history-delete";
+        delBtn.textContent = "✖";
+        delBtn.setAttribute("aria-label", "Slet dag");
+        delBtn.title = "Slet dag";
+        delBtn.addEventListener("click", function () {
+          deleteDay(dateISO);
+        });
+
+        item.appendChild(delBtn);
+        return item;
+      }
+
+      function deleteDay(dateISO) {
+        if (!Object.prototype.hasOwnProperty.call(model.entries, dateISO)) {
+          return;
+        }
+
+        openConfirm({
+          title: "Slet dag?",
+          message: "Slet data for " + formatDate(dateISO) + "?",
+          okText: "Slet",
+          cancelText: "Fortryd",
+          okClass: "danger"
+        }).then(function (ok) {
+          if (!ok) {
+            return;
+          }
+
+          delete model.entries[dateISO];
+          saveModel(model);
+          render();
+          setStatus("Slettede data for " + formatDate(dateISO) + ".");
+        });
+      }
+
+      function toggleSettingsEditPanel() {
+        var isOpen = !settingsEditPanelEl.classList.contains("hidden");
+        if (isOpen) {
+          settingsEditPanelEl.classList.add("hidden");
+          settingsEditToggleEl.setAttribute("aria-expanded", "false");
+          return;
+        }
+
+        settingsEditPanelEl.classList.remove("hidden");
+        settingsEditToggleEl.setAttribute("aria-expanded", "true");
+        quickGoalInputEl.value = toGoalInputValue(Number(model.settings.dailyGoalKm || DEFAULT_DAILY_GOAL_KM));
+        quickStartDateInputEl.value = normalizeStartDateISO(
+          model.settings.startDateISO,
+          new Date(),
+          getCurrentMonthFirstISO(new Date())
+        );
+      }
+
+      function saveQuickSettings() {
+        clearStatus();
+        var now = new Date();
+        var currentMonthFirstISO = getCurrentMonthFirstISO(now);
+        var todayISO = dateToInputValue(now);
+        var nextStartDateISO = String(quickStartDateInputEl.value || "");
+        var nextGoalKm = parseLocalizedDecimal(quickGoalInputEl.value);
+
+        if (!isISODateString(nextStartDateISO)) {
+          setStatus("Vælg en gyldig startdato.", true);
+          openAlert({
+            title: "Ugyldig startdato",
+            message: "Vælg en gyldig startdato."
+          });
+          return;
+        }
+
+        if (nextStartDateISO < currentMonthFirstISO) {
+          setStatus("Startdato skal ligge i denne måned.", true);
+          openAlert({
+            title: "Ugyldig startdato",
+            message: "Startdato skal ligge i denne måned."
+          });
+          return;
+        }
+
+        if (nextStartDateISO > todayISO) {
+          setStatus("Startdato kan ikke ligge i fremtiden.", true);
+          openAlert({
+            title: "Ugyldig startdato",
+            message: "Startdato kan ikke ligge i fremtiden."
+          });
+          return;
+        }
+
+        if (!Number.isFinite(nextGoalKm) || nextGoalKm <= 0) {
+          setStatus("Indtast et gyldigt km-mål over 0.", true);
+          openAlert({
+            title: "Ugyldigt km-mål",
+            message: "Indtast et gyldigt km-mål over 0."
+          });
+          return;
+        }
+
+        model.settings.startDateISO = nextStartDateISO;
+        model.settings.dailyGoalKm = round(nextGoalKm, 1);
+        saveModel(model);
+        render();
+        settingsEditPanelEl.classList.add("hidden");
+        settingsEditToggleEl.setAttribute("aria-expanded", "false");
+        setStatus("Startdato og km-mål gemt.");
+      }
+
+      function openConfirm(options) {
+        options = options || {};
+        if (confirmOpen) {
+          return Promise.resolve(false);
+        }
+        confirmOpen = true;
+
+        modalTitle.textContent = options.title || "Er du sikker?";
+        modalMessage.textContent = options.message || "";
+        modalConfirm.textContent = options.okText || "OK";
+        modalCancel.textContent = options.cancelText || "Fortryd";
+        modalCancel.classList.remove("hidden");
+        modalConfirm.closest(".modal-actions").classList.remove("one-column");
+        modalConfirm.classList.toggle("modal-danger", options.okClass === "danger");
+        modalBackdrop.style.zIndex = "2147483647";
+        modalBackdrop.classList.remove("hidden");
+
+        return new Promise(function (resolve) {
+          function cleanup(result) {
+            modalBackdrop.classList.add("hidden");
+            modalConfirm.classList.remove("modal-danger");
+            modalCancel.onclick = null;
+            modalConfirm.onclick = null;
+            modalBackdrop.onclick = null;
+            confirmOpen = false;
+            resolve(result);
+          }
+
+          modalCancel.onclick = function () { cleanup(false); };
+          modalConfirm.onclick = function () { cleanup(true); };
+          modalBackdrop.onclick = function (event) {
+            if (event.target === modalBackdrop) {
+              cleanup(false);
+            }
+          };
+        });
+      }
+
+      function openAlert(options) {
+        options = options || {};
+        modalTitle.textContent = options.title || "Besked";
+        modalMessage.textContent = options.message || "";
+        modalConfirm.textContent = options.okText || "OK";
+        modalCancel.classList.add("hidden");
+        modalConfirm.closest(".modal-actions").classList.add("one-column");
+        modalConfirm.classList.toggle("modal-danger", options.okClass === "danger");
+        modalBackdrop.classList.remove("hidden");
+
+        return new Promise(function (resolve) {
+          function cleanup() {
+            modalBackdrop.classList.add("hidden");
+            modalConfirm.classList.remove("modal-danger");
+            modalCancel.classList.remove("hidden");
+            modalConfirm.closest(".modal-actions").classList.remove("one-column");
+            modalCancel.onclick = null;
+            modalConfirm.onclick = null;
+            modalBackdrop.onclick = null;
+            resolve(true);
+          }
+
+          modalConfirm.onclick = cleanup;
+          modalBackdrop.onclick = function (event) {
+            if (event.target === modalBackdrop) {
+              cleanup();
+            }
+          };
+        });
+      }
+
+      function rotateBenefitOnOpen() {
+        if (!benefitLineEl || WALK_BENEFITS.length === 0) {
+          return;
+        }
+
+        var nextIndex = 0;
+        try {
+          var raw = localStorage.getItem(BENEFIT_ROTATION_KEY);
+          var previousIndex = Number(raw);
+          if (Number.isInteger(previousIndex) && previousIndex >= 0) {
+            nextIndex = (previousIndex + 1) % WALK_BENEFITS.length;
+          }
+          localStorage.setItem(BENEFIT_ROTATION_KEY, String(nextIndex));
+        } catch (error) {
+          nextIndex = 0;
+        }
+
+        benefitLineEl.textContent = "→ " + WALK_BENEFITS[nextIndex];
+      }
+
+      function hasHealthBridge() {
+        if (window.GaaGrisHealth && typeof window.GaaGrisHealth.getLatestWeightKg === "function") {
+          return true;
+        }
+        var plugins = window.Capacitor && window.Capacitor.Plugins;
+        if (!plugins) {
+          return false;
+        }
+        return Boolean(
+          (plugins.HealthKit && (typeof plugins.HealthKit.getLatestWeightKg === "function" || typeof plugins.HealthKit.getLatestWeight === "function")) ||
+          (plugins.AppleHealthKit && (typeof plugins.AppleHealthKit.getLatestWeightKg === "function" || typeof plugins.AppleHealthKit.getLatestWeight === "function")) ||
+          (plugins.Health && (typeof plugins.Health.getLatestWeightKg === "function" || typeof plugins.Health.getLatestWeight === "function"))
+        );
+      }
+
+      function syncWeightFromHealth(silent) {
+        return getLatestWeightFromHealth()
+          .then(function (weightKg) {
+            model.settings.userWeightKg = round(weightKg, 1);
+            model.settings.weightSource = "health";
+            saveModel(model);
+            render();
+            setStatus("Data hentet fra Sundhed.");
+          })
+          .catch(function () {
+            if (silent) {
+              return;
+            }
+            openAlert({
+              title: "Sundhed ikke tilgængelig",
+              message: "Direkte hentning kræver en iOS app-version med HealthKit-bridge."
+            });
+          });
+      }
+
+      function getLatestWeightFromHealth() {
+        if (window.GaaGrisHealth && typeof window.GaaGrisHealth.getLatestWeightKg === "function") {
+          return Promise.resolve(window.GaaGrisHealth.getLatestWeightKg()).then(ensureWeightKg);
+        }
+
+        var plugins = window.Capacitor && window.Capacitor.Plugins;
+        if (!plugins) {
+          return Promise.reject(new Error("health bridge missing"));
+        }
+
+        var candidates = [
+          { plugin: plugins.HealthKit, method: "getLatestWeightKg" },
+          { plugin: plugins.HealthKit, method: "getLatestWeight" },
+          { plugin: plugins.AppleHealthKit, method: "getLatestWeightKg" },
+          { plugin: plugins.AppleHealthKit, method: "getLatestWeight" },
+          { plugin: plugins.Health, method: "getLatestWeightKg" },
+          { plugin: plugins.Health, method: "getLatestWeight" }
+        ];
+
+        var chain = Promise.reject(new Error("no method"));
+        candidates.forEach(function (candidate) {
+          if (!candidate.plugin || typeof candidate.plugin[candidate.method] !== "function") {
+            return;
+          }
+          chain = chain.catch(function () {
+            return Promise.resolve(candidate.plugin[candidate.method]()).then(ensureWeightKg);
+          });
+        });
+
+        return chain;
+      }
+
+      function ensureWeightKg(value) {
+        var kg = extractWeightKg(value);
+        if (!Number.isFinite(kg) || kg <= 0) {
+          throw new Error("invalid weight");
+        }
+        return kg;
+      }
+
+      function extractWeightKg(value) {
+        if (Number.isFinite(value)) {
+          return Number(value);
+        }
+
+        if (!value || typeof value !== "object") {
+          return NaN;
+        }
+
+        var raw =
+          value.kg != null ? value.kg :
+          value.weightKg != null ? value.weightKg :
+          value.weight != null ? value.weight :
+          value.value != null ? value.value :
+          value.bodyMassKg != null ? value.bodyMassKg :
+          NaN;
+
+        var number = Number(raw);
+        if (!Number.isFinite(number)) {
+          return NaN;
+        }
+
+        var unit = String(value.unit || "").toLowerCase();
+        if (unit === "lb" || unit === "lbs" || unit === "pounds") {
+          return number * 0.45359237;
+        }
+        return number;
+      }
+
+      function parseLocalizedDecimal(value) {
+        var normalized = String(value || "").trim().replace(",", ".");
+        var number = Number(normalized);
+        return Number.isFinite(number) ? number : NaN;
+      }
+
+      function normalizeEntryRecord(raw) {
+        var record = {};
+
+        if (Number.isFinite(raw) && raw >= 0) {
+          record.km = round(Number(raw), 2);
+          return record;
+        }
+
+        if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+          return record;
+        }
+
+        var km = Number(raw.km);
+        if (Number.isFinite(km) && km >= 0) {
+          record.km = round(km, 2);
+        }
+
+        var weightKg = Number(raw.weightKg);
+        if (Number.isFinite(weightKg) && weightKg > 0) {
+          record.weightKg = round(weightKg, 1);
+        }
+
+        return record;
+      }
+
+      function getEntryKm(raw) {
+        var record = normalizeEntryRecord(raw);
+        return Object.prototype.hasOwnProperty.call(record, "km") ? record.km : NaN;
+      }
+
+      function getEntryWeight(raw) {
+        var record = normalizeEntryRecord(raw);
+        return Object.prototype.hasOwnProperty.call(record, "weightKg") ? record.weightKg : NaN;
+      }
+
+      function formatHistoryMain(km, weightKg) {
+        var kmText = Number.isFinite(km) && km >= 0
+          ? "<strong>" + formatNumber(km, 1) + " km</strong>"
+          : "- km";
+        var weightText = Number.isFinite(weightKg) && weightKg > 0
+          ? "<strong>" + formatNumber(weightKg, 1) + " kg</strong>"
+          : "- kg";
+        return kmText + " · " + weightText;
+      }
+
+      function loadModel() {
+        var base = defaultModel();
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) {
+            return base;
+          }
+
+          var parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== "object") {
+            return base;
+          }
+
+          if (parsed.entries && typeof parsed.entries === "object") {
+            var normalizedEntries = {};
+            Object.keys(parsed.entries).forEach(function (dateKey) {
+              var normalizedEntry = normalizeEntryRecord(parsed.entries[dateKey]);
+              if (Object.keys(normalizedEntry).length > 0) {
+                normalizedEntries[dateKey] = normalizedEntry;
+              }
+            });
+            base.entries = normalizedEntries;
+          }
+
+          if (parsed.settings && typeof parsed.settings === "object") {
+            var dailyGoalKm = Number(parsed.settings.dailyGoalKm);
+            if (Number.isFinite(dailyGoalKm) && dailyGoalKm > 0) {
+              base.settings.dailyGoalKm = round(dailyGoalKm, 1);
+            }
+            base.settings.startDateISO = normalizeStartDateISO(
+              parsed.settings.startDateISO,
+              new Date(),
+              base.settings.startDateISO
+            );
+            var userWeightKg = Number(parsed.settings.userWeightKg);
+            if (Number.isFinite(userWeightKg) && userWeightKg > 0) {
+              base.settings.userWeightKg = round(userWeightKg, 1);
+            }
+            if (parsed.settings.weightSource === "health" || parsed.settings.weightSource === "manual") {
+              base.settings.weightSource = parsed.settings.weightSource;
+            }
+          }
+
+          return base;
+        } catch (error) {
+          return base;
+        }
+      }
+
+      function defaultModel() {
+        return {
+          entries: {},
+          settings: {
+            dailyGoalKm: DEFAULT_DAILY_GOAL_KM,
+            startDateISO: getCurrentMonthFirstISO(new Date()),
+            userWeightKg: DEFAULT_USER_WEIGHT_KG,
+            weightSource: "default"
+          }
+        };
+      }
+
+      function saveModel(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function getDaysInMonth(year, monthIndex) {
+        return new Date(year, monthIndex + 1, 0).getDate();
+      }
+
+      function isISODateString(value) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+      }
+
+      function getCurrentMonthFirstISO(now) {
+        now = now || new Date();
+        return now.getFullYear() + "-" + pad(now.getMonth() + 1) + "-01";
+      }
+
+      function normalizeStartDateISO(rawISO, now, fallbackISO) {
+        now = now || new Date();
+        var monthFirstISO = getCurrentMonthFirstISO(now);
+        var todayISO = dateToInputValue(now);
+        var fallback = isISODateString(fallbackISO) ? fallbackISO : monthFirstISO;
+        if (!isISODateString(rawISO)) {
+          return fallback;
+        }
+        if (rawISO < monthFirstISO) {
+          return monthFirstISO;
+        }
+        if (rawISO > todayISO) {
+          return todayISO;
+        }
+        return rawISO;
+      }
+
+      function dateToInputValue(date) {
+        return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate());
+      }
+
+      function formatDate(value) {
+        return new Intl.DateTimeFormat("da-DK", { dateStyle: "medium" }).format(new Date(value + "T12:00:00"));
+      }
+
+      function formatNumber(value, decimals) {
+        return new Intl.NumberFormat("da-DK", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        }).format(value);
+      }
+
+      function formatNumberDot(value, decimals) {
+        return round(value, decimals).toFixed(decimals);
+      }
+
+      function toWeightInputValue(value) {
+        return round(value, 1).toFixed(1);
+      }
+
+      function toGoalInputValue(value) {
+        return round(value, 1).toFixed(1);
+      }
+
+      function pad(value) {
+        return String(value).padStart(2, "0");
+      }
+
+      function sum(list) {
+        return list.reduce(function (acc, item) {
+          return acc + item;
+        }, 0);
+      }
+
+      function round(value, decimals) {
+        var factor = Math.pow(10, decimals);
+        return Math.round(value * factor) / factor;
+      }
+
+      function setStatus(message, isError) {
+        statusEl.textContent = message;
+        statusEl.classList.toggle("err", Boolean(isError));
+      }
+
+      function clearStatus() {
+        setStatus("", false);
+      }
+    })();
+  </script>
+</body>
+</html>
